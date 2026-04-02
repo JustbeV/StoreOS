@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StoreOS — Offline</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: #111827;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: #059669;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      color: white;
+      margin: 0 auto 24px;
+    }
+    h1 { font-size: 22px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+    p  { font-size: 14px; color: #9ca3af; line-height: 1.6; max-width: 280px; margin: 0 auto 28px; }
+    .retry-btn {
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .retry-btn:hover { background: #047857; }
+    .tip {
+      margin-top: 32px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+      max-width: 320px;
+      text-align: left;
+    }
+    .tip-title { font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .tip-item  { font-size: 13px; color: #d1d5db; margin-bottom: 6px; display: flex; gap: 8px; }
+    .tip-item::before { content: '→'; color: #059669; flex-shrink: 0; }
+    .status {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #dc2626;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">S</div>
+  <h1>You're offline</h1>
+  <p>StoreOS needs an internet connection to sync your data. Connect to Wi-Fi or mobile data and try again.</p>
+  <button class="retry-btn" onclick="tryReconnect()">Try again</button>
+
+  <div class="tip">
+    <div class="tip-title">While you wait</div>
+    <div class="tip-item">Sales you record will sync when back online</div>
+    <div class="tip-item">Your data is safe in Firebase</div>
+    <div class="tip-item">Already-loaded pages still work</div>
+  </div>
+
+  <div class="status">
+    <div class="dot" id="statusDot"></div>
+    <span id="statusText">No internet connection</span>
+  </div>
+
+  <script>
+    function tryReconnect() {
+      window.location.href = '/';
+    }
+
+    // Watch for connection changes
+    window.addEventListener('online', () => {
+      document.getElementById('statusDot').style.background = '#059669';
+      document.getElementById('statusText').textContent = 'Back online! Redirecting...';
+      setTimeout(() => { window.location.href = '/'; }, 800);
+    });
+
+    window.addEventListener('offline', () => {
+      document.getElementById('statusDot').style.background = '#dc2626';
+      document.getElementById('statusText').textContent = 'No internet connection';
+    });
+
+    // Auto-check connectivity every 5 seconds
+    setInterval(() => {
+      if (navigator.onLine) {
+        document.getElementById('statusDot').style.background = '#059669';
+        document.getElementById('statusText').textContent = 'Back online! Redirecting...';
+        setTimeout(() => { window.location.href = '/'; }, 800);
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

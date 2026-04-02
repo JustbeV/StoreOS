@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StoreOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="shortcut icon" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon.svg">
+</head>
+<body>
+
+<!-- =================== AUTH VIEW =================== -->
+<div id="authView" class="full-screen-center">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-logo-mark">S</div>
+      <div>
+        <div class="auth-logo-text">StoreOS</div>
+        <div class="auth-tagline">Your store. Under control.</div>
+      </div>
+    </div>
+    <div class="auth-card">
+      <div class="tab-group">
+        <button class="tab active" id="tabLogin" onclick="switchTab('login')">Log in</button>
+        <button class="tab" id="tabSignup" onclick="switchTab('signup')">Sign up</button>
+      </div>
+
+      <div id="loginForm" style="display:flex;flex-direction:column;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="loginEmail" placeholder="you@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="login()">Log in</button>
+      </div>
+
+      <div id="signupForm" style="display:none;flex-direction:column;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Your name</label>
+          <input type="text" id="signupName" placeholder="Juan dela Cruz" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="signupEmail" placeholder="you@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="signupPassword" placeholder="Min. 6 characters" autocomplete="new-password">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="signup()">Create account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== ONBOARDING VIEW =================== -->
+<div id="onboardingView" class="full-screen-center" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-logo-mark">S</div>
+      <div>
+        <div class="auth-logo-text">StoreOS</div>
+        <div class="auth-tagline">Your store. Under control.</div>
+      </div>
+    </div>
+    <div class="auth-card">
+      <h2 class="onboard-title">Set up your store</h2>
+      <p class="onboard-sub">Create a new store or join an existing one with a Store ID.</p>
+      <button class="btn btn-primary btn-block" onclick="openCreateStoreModal()">Create a new store</button>
+      <div class="auth-divider">or join an existing one</div>
+      <div class="form-group">
+        <label class="form-label">Store ID</label>
+        <input type="text" id="joinStoreId" placeholder="e.g. store_1234567890">
+      </div>
+      <button class="btn btn-outline btn-block" onclick="joinStore()">Join store</button>
+      <button class="btn btn-ghost btn-block" onclick="logout()" style="margin-top:4px">Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== APP VIEW =================== -->
+<div id="appView" style="display:none">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <button class="menu-btn" onclick="toggleSidebar()" title="Toggle menu">
+        <span class="menu-icon"></span>
+        <span class="menu-icon"></span>
+        <span class="menu-icon"></span>
+      </button>
+      <div class="header-brand">
+        <span class="header-store-name" id="storeName">My Store</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-chip">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <span class="user-name" id="userDisplayName">User</span>
+        <span class="role-pill" id="rolePill">cashier</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Log out</button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">S</div>
+      <span>StoreOS</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" data-section="dashboard" href="#/dashboard" onclick="showSection('dashboard')">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-section="products" href="#/products" onclick="showSection('products')">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"/></svg>
+        Products
+        <span class="nav-badge" id="lowStockNavBadge" style="display:none">!</span>
+      </a>
+      <a class="nav-item" data-section="sales" href="#/sales" onclick="showSection('sales')">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+        Sales
+      </a>
+      <a class="nav-item" data-section="utang" href="#/utang" onclick="showSection('utang')">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+        Utang
+      </a>
+      <a class="nav-item" data-section="members" id="membersNav" href="#/members" onclick="showSection('members')">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        Members
+      </a>
+      <a class="nav-item" data-section="audit" id="auditNav" href="#/audit" onclick="showSection('audit')">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        Activity Log
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-store-id" id="sidebarStoreId"></div>
+    </div>
+  </aside>
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="mainContent">
+
+    <!-- Global low stock banner -->
+    <div id="lowStockBanner" class="banner banner-warning" style="display:none">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+      <span id="lowStockText">Some products are low on stock</span>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <section id="dashboardSection" class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Dashboard</h2>
+          <p class="section-sub">Overview of your store</p>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Today's Sales</div>
+          <div class="stat-value" id="statToday">₱0</div>
+          <div class="stat-sub" id="statTodayCount">0 transactions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">This Week</div>
+          <div class="stat-value" id="statWeek">₱0</div>
+          <div class="stat-sub" id="statWeekCount">0 transactions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">This Month</div>
+          <div class="stat-value" id="statMonth">₱0</div>
+          <div class="stat-sub" id="statMonthCount">0 transactions</div>
+        </div>
+        <div class="stat-card stat-warning">
+          <div class="stat-label">Total Utang</div>
+          <div class="stat-value" id="statUtang">₱0</div>
+          <div class="stat-sub" id="statUtangCount">0 customers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Products</div>
+          <div class="stat-value" id="statProducts">0</div>
+          <div class="stat-sub">in catalog</div>
+        </div>
+        <div class="stat-card stat-danger">
+          <div class="stat-label">Low / Out of Stock</div>
+          <div class="stat-value" id="statLowStock">0</div>
+          <div class="stat-sub">products need attention</div>
+        </div>
+      </div>
+      <div class="section-sub-header">
+        <h3 class="sub-title">Recent Activity</h3>
+      </div>
+      <div id="recentActivity" class="activity-list">
+        <div class="empty-state">No activity yet</div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section id="productsSection" class="section" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Products</h2>
+          <p class="section-sub">Manage your product catalog and inventory</p>
+        </div>
+        <button class="btn btn-primary" id="addProductBtn" onclick="openProductModal()">+ Add Product</button>
+      </div>
+      <div id="lowStockAlert" class="alert alert-warning" style="display:none"></div>
+      <div id="productGrid" class="product-grid">
+        <div class="empty-state" style="grid-column:1/-1">No products yet. Add your first one!</div>
+      </div>
+    </section>
+
+    <!-- SALES SECTION -->
+    <section id="salesSection" class="section" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Sales</h2>
+          <p class="section-sub">Record and track your transactions</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-outline" onclick="exportSalesCsv()">Export CSV</button>
+          <button class="btn btn-primary" onclick="openSaleModal()">+ New Sale</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filterSales('today', this)">Today</button>
+          <button class="filter-tab" onclick="filterSales('week', this)">This Week</button>
+          <button class="filter-tab" onclick="filterSales('month', this)">This Month</button>
+          <button class="filter-tab" onclick="filterSales('all', this)">All Time</button>
+        </div>
+        <div class="sales-total-chip" id="salesTotalChip">₱0 · 0 sales</div>
+      </div>
+      <div id="salesList" class="item-list">
+        <div class="empty-state">No sales recorded yet.</div>
+      </div>
+    </section>
+
+    <!-- UTANG SECTION -->
+    <section id="utangSection" class="section" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Utang</h2>
+          <p class="section-sub">Track customer credit and payments</p>
+        </div>
+        <button class="btn btn-primary" onclick="openUtangModal()">+ Add Utang</button>
+      </div>
+      <div id="utangList" class="item-list">
+        <div class="empty-state">No utang records yet.</div>
+      </div>
+    </section>
+
+    <!-- MEMBERS SECTION -->
+    <section id="membersSection" class="section" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Members</h2>
+          <p class="section-sub">Manage who has access to your store</p>
+        </div>
+      </div>
+      <div class="info-panel">
+        <div class="info-panel-label">Your Store ID</div>
+        <div class="info-panel-row">
+          <code class="store-id-code" id="storeIdDisplay">—</code>
+          <button class="btn btn-sm btn-outline" onclick="copyStoreId()">Copy</button>
+        </div>
+        <div class="info-panel-hint">Share this ID with family members or staff so they can join your store.</div>
+      </div>
+      <div id="membersList" class="members-list"></div>
+    </section>
+
+    <!-- AUDIT SECTION -->
+    <section id="auditSection" class="section" style="display:none">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Activity Log</h2>
+          <p class="section-sub">See everything that happens in your store</p>
+        </div>
+      </div>
+      <div id="auditList" class="item-list">
+        <div class="empty-state">No activity yet.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- =================== MODAL =================== -->
+<div id="modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<!-- =================== TOAST CONTAINER =================== -->
+<div id="toastContainer" class="toast-container"></div>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
