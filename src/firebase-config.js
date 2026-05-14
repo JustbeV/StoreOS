@@ -9,6 +9,6 @@ export const firebaseConfig = {
 
 export const cloudinaryConfig = {
   cloudName: 'db0ioyorv',
-  uploadPreset: 'storeos_unsigned',
+  uploadPreset: 'StoreOS',
   folder: 'storeos-products',
 };

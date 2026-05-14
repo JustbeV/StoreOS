@@ -153,7 +153,9 @@ export function initProductsFeature({
     });
 
     if (!response.ok) {
-      throw new Error('Cloudinary upload failed');
+      const errorBody = await response.json().catch(() => null);
+      const message = errorBody?.error?.message || `HTTP ${response.status}`;
+      throw new Error(`Cloudinary upload failed: ${message}`);
     }
 
     const result = await response.json();
