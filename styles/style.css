@@ -79,7 +79,7 @@ body {
   width: 84px;
   height: 46px;
   background: transparent;
-  border-radius: 999px; /* makes it oblong/pill shape */
+  border-radius: 999px; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,10 +458,11 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   padding: 28px;
   min-height: calc(100vh - var(--header-h));
   transition: margin-left 0.25s cubic-bezier(0.4,0,0.2,1);
+  min-width: 0;
 }
 
 /* ===================== SECTIONS ===================== */
-.section { max-width: 1000px; }
+.section { max-width: 1000px; width: 100%; }
 
 .section-header {
   display: flex;
@@ -543,11 +544,12 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 /* ===================== PRODUCT GRID ===================== */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 14px;
 }
 
 .product-card {
+  min-width: 0;
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -1050,7 +1052,7 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
   }
 
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .product-grid { grid-template-columns: 1fr; }
 
   .user-name { display: none; }
   .header-right .btn-ghost { display: none; }
@@ -1063,6 +1065,6 @@ select { cursor: pointer; appearance: none; background-image: url("data:image/sv
 
 @media (max-width: 420px) {
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-  .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .product-grid { grid-template-columns: 1fr; gap: 10px; }
   .stat-value { font-size: 20px; }
 }

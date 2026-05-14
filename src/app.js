@@ -111,6 +111,16 @@ window.showSection = function (name) {
   router.showSection(name);
 };
 
+window.showDashboardHelp = function () {
+  openModal(`
+    <div class="modal-title">Dashboard help</div>
+    <p>This page gives you a quick overview of your store: sales totals, low stock alerts, total utang, product count, and recent activity. Use the sidebar to switch sections for products, sales, utang, members, and audit logs.</p>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeModal()">Got it</button>
+    </div>
+  `);
+};
+
 function updateDashboardStats() {
   const todaySales = filterSalesByPeriod(state.allSales, 'today');
   const weekSales = filterSalesByPeriod(state.allSales, 'week');
