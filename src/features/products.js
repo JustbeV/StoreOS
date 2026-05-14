@@ -153,8 +153,14 @@ export function initProductsFeature({
     });
 
     if (!response.ok) {
-      const errorBody = await response.json().catch(() => null);
-      const message = errorBody?.error?.message || `HTTP ${response.status}`;
+      const text = await response.text().catch(() => 'Unable to read error body');
+      let message = `HTTP ${response.status}`;
+      try {
+        const errorBody = JSON.parse(text);
+        message = errorBody?.error?.message || JSON.stringify(errorBody);
+      } catch {
+        if (text) message = text;
+      }
       throw new Error(`Cloudinary upload failed: ${message}`);
     }
 
