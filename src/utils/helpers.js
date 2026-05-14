@@ -1,5 +1,5 @@
 export function showView(viewId) {
-  ['authView', 'onboardingView', 'appView'].forEach(id => {
+  ['authView', 'onboardingView', 'appView', 'landingView'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -18,6 +18,7 @@ export function closeModal() {
 
 export function initUiGlobals() {
   window.closeModal = closeModal;
+  window.showView = showView;
   window.handleModalOverlayClick = function (e) {
     if (e.target === document.getElementById('modal')) closeModal();
   };

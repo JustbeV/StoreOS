@@ -15,6 +15,37 @@
 </head>
 <body>
 
+<!-- =================== LANDING VIEW =================== -->
+<div id="landingView" class="full-screen-center">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-logo-mark">
+        <img src="assets/logo.png" alt="StoreOS logo" class="auth-logo-image">
+      </div>
+      <div>
+        <div class="auth-logo-text">StoreOS</div>
+        <div class="auth-tagline">Your store. Under control.</div>
+      </div>
+    </div>
+    <div class="auth-card">
+      <h1 style="text-align:center;margin-bottom:16px;font-size:24px;font-weight:600">Manage Your Store Effortlessly</h1>
+      <p style="text-align:center;margin-bottom:24px;color:#666">Track products, sales, debts, and team members—all in one place. Perfect for small businesses.</p>
+      <div style="margin-bottom:24px">
+        <h3 style="font-size:16px;font-weight:500;margin-bottom:12px">Key Features:</h3>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li style="margin-bottom:8px">📦 Inventory management with low stock alerts</li>
+          <li style="margin-bottom:8px">💰 Sales tracking and transaction history</li>
+          <li style="margin-bottom:8px">📋 Credit/debt monitoring for customers</li>
+          <li style="margin-bottom:8px">👥 Multi-user support with role-based access</li>
+          <li style="margin-bottom:8px">📱 Works offline with automatic sync</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="showView('authView')">Get Started</button>
+      <p style="text-align:center;margin-top:16px;font-size:14px;color:#888">Already have an account? <a href="#" onclick="showView('authView')" style="color:#059669;text-decoration:none">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
 <!-- =================== AUTH VIEW =================== -->
 <div id="authView" class="full-screen-center">
   <div class="auth-wrap">
@@ -173,6 +204,7 @@
           <h2 class="section-title">Dashboard</h2>
           <p class="section-sub">Overview of your store</p>
         </div>
+        <button class="btn btn-ghost btn-sm" title="This is your overview. Check sales stats and recent activity here." style="margin-left:10px">?</button>
       </div>
       <div class="stats-grid">
         <div class="stat-card">
@@ -221,11 +253,14 @@
           <h2 class="section-title">Products</h2>
           <p class="section-sub">Manage your product catalog and inventory</p>
         </div>
-        <button class="btn btn-primary" id="addProductBtn" onclick="openProductModal()">+ Add Product</button>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" title="Add items with names, prices, and stock levels. Low stock alerts appear here." style="margin-left:10px">?</button>
+          <button class="btn btn-primary" id="addProductBtn" onclick="openProductModal()">+ Add Product</button>
+        </div>
       </div>
       <div id="lowStockAlert" class="alert alert-warning" style="display:none"></div>
       <div id="productGrid" class="product-grid">
-        <div class="empty-state" style="grid-column:1/-1">No products yet. Add your first one!</div>
+        <div class="empty-state" style="grid-column:1/-1">No products yet. <a href="#" onclick="openProductModal()" style="color:#059669;text-decoration:none">Add your first one!</a></div>
       </div>
     </section>
 
@@ -237,6 +272,7 @@
           <p class="section-sub">Record and track your transactions</p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" title="Record transactions. Use filters to view by time period." style="margin-left:10px">?</button>
           <button class="btn btn-outline" onclick="exportSalesCsv()">Export CSV</button>
           <button class="btn btn-primary" onclick="openSaleModal()">+ New Sale</button>
         </div>
@@ -251,7 +287,7 @@
         <div class="sales-total-chip" id="salesTotalChip">₱0 · 0 sales</div>
       </div>
       <div id="salesList" class="item-list">
-        <div class="empty-state">No sales recorded yet.</div>
+        <div class="empty-state">No sales recorded yet. Start by adding products, then record your first sale!</div>
       </div>
     </section>
 
@@ -262,10 +298,13 @@
           <h2 class="section-title">Utang</h2>
           <p class="section-sub">Track customer credit and payments</p>
         </div>
-        <button class="btn btn-primary" onclick="openUtangModal()">+ Add Utang</button>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" title="Track customer debts. Add credits and monitor payments." style="margin-left:10px">?</button>
+          <button class="btn btn-primary" onclick="openUtangModal()">+ Add Utang</button>
+        </div>
       </div>
       <div id="utangList" class="item-list">
-        <div class="empty-state">No utang records yet.</div>
+        <div class="empty-state">No utang records yet. Track customer debts here.</div>
       </div>
     </section>
 
@@ -276,6 +315,7 @@
           <h2 class="section-title">Members</h2>
           <p class="section-sub">Manage who has access to your store</p>
         </div>
+        <button class="btn btn-ghost btn-sm" title="Invite team members with your Store ID. Assign roles like cashier or admin." style="margin-left:10px">?</button>
       </div>
       <div class="info-panel">
         <div class="info-panel-label">Your Store ID</div>
@@ -295,13 +335,19 @@
           <h2 class="section-title">Activity Log</h2>
           <p class="section-sub">See everything that happens in your store</p>
         </div>
+        <button class="btn btn-ghost btn-sm" title="View all changes, like added products or sales, for auditing." style="margin-left:10px">?</button>
       </div>
       <div id="auditList" class="item-list">
-        <div class="empty-state">No activity yet.</div>
+        <div class="empty-state">No activity yet. Actions like adding products or recording sales will appear here.</div>
       </div>
     </section>
 
   </main>
+
+  <!-- =================== FOOTER =================== -->
+  <footer style="padding:16px;text-align:center;font-size:14px;color:#666;border-top:1px solid #e5e7eb;margin-top:auto">
+    StoreOS v1.0 | Built for small businesses | <a href="mailto:support@storeos.com" style="color:#059669;text-decoration:none">Contact Support</a>
+  </footer>
 </div>
 
 <!-- =================== MODAL =================== -->

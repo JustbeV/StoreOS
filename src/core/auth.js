@@ -85,6 +85,6 @@ export function initAuth({
 
     resetSessionState();
     state.currentUser = null;
-    showView('authView');
+    showView('landingView');
   });
 }
