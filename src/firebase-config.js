@@ -6,3 +6,9 @@ export const firebaseConfig = {
   messagingSenderId: "1077754476883",
   appId: "1:1077754476883:web:9874e16451c7e31a8689a6"
 };
+
+export const cloudinaryConfig = {
+  cloudName: 'db0ioyorv',
+  uploadPreset: 'storeos_unsigned',
+  folder: 'storeos-products',
+};

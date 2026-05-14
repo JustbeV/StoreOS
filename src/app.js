@@ -1,4 +1,4 @@
-import { firebaseConfig } from './firebase-config.js';
+import { firebaseConfig, cloudinaryConfig } from './firebase-config.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore, collection, addDoc, onSnapshot, doc,
@@ -111,14 +111,56 @@ window.showSection = function (name) {
   router.showSection(name);
 };
 
-window.showDashboardHelp = function () {
+function openSectionHelp(title, message) {
   openModal(`
-    <div class="modal-title">Dashboard help</div>
-    <p>This page gives you a quick overview of your store: sales totals, low stock alerts, total utang, product count, and recent activity. Use the sidebar to switch sections for products, sales, utang, members, and audit logs.</p>
+    <div class="modal-title">${title}</div>
+    <p>${message}</p>
     <div class="modal-footer">
       <button class="btn btn-primary" onclick="closeModal()">Got it</button>
     </div>
   `);
+}
+
+window.showDashboardHelp = function () {
+  openSectionHelp(
+    'Dashboard help',
+    'This page gives you a quick overview of your store: sales totals, low stock alerts, total utang, product count, and recent activity. Use the sidebar to switch sections for products, sales, utang, members, and audit logs.'
+  );
+};
+
+window.showProductsHelp = function () {
+  openSectionHelp(
+    'Products help',
+    'Manage your product catalog here. Add products, update stock levels, and see low-stock alerts when items need attention.'
+  );
+};
+
+window.showSalesHelp = function () {
+  openSectionHelp(
+    'Sales help',
+    'Record transactions and view sales history. Use the filters to switch between today, this week, this month, and all-time sales.'
+  );
+};
+
+window.showUtangHelp = function () {
+  openSectionHelp(
+    'Utang help',
+    'Track customer debts and payments. Add utang entries, then update payments as customers settle their balances.'
+  );
+};
+
+window.showMembersHelp = function () {
+  openSectionHelp(
+    'Members help',
+    'Manage the people who can access your store. Share your Store ID with staff and assign roles like admin, manager, or cashier.'
+  );
+};
+
+window.showAuditHelp = function () {
+  openSectionHelp(
+    'Activity Log help',
+    'See a history of actions taken in your store, such as added products, recorded sales, and updates to utang or members.'
+  );
 };
 
 function updateDashboardStats() {
@@ -176,6 +218,7 @@ const { listenProducts } = initProductsFeature({
   ref,
   uploadBytes,
   getDownloadURL,
+  cloudinaryConfig,
   serverTimestamp,
   fmtNum,
   escHtml,

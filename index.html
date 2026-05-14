@@ -254,7 +254,7 @@
           <p class="section-sub">Manage your product catalog and inventory</p>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-ghost btn-sm" title="Add items with names, prices, and stock levels. Low stock alerts appear here." style="margin-left:10px">?</button>
+          <button class="btn btn-primary btn-sm" onclick="showProductsHelp()" title="Click to learn what this page shows" style="margin-left:10px">Click to learn about this page</button>
           <button class="btn btn-primary" id="addProductBtn" onclick="openProductModal()">+ Add Product</button>
         </div>
       </div>
@@ -272,7 +272,7 @@
           <p class="section-sub">Record and track your transactions</p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" title="Record transactions. Use filters to view by time period." style="margin-left:10px">?</button>
+          <button class="btn btn-primary btn-sm" onclick="showSalesHelp()" title="Click to learn what this page shows" style="margin-left:10px">Click to learn about this page</button>
           <button class="btn btn-outline" onclick="exportSalesCsv()">Export CSV</button>
           <button class="btn btn-primary" onclick="openSaleModal()">+ New Sale</button>
         </div>
@@ -299,7 +299,7 @@
           <p class="section-sub">Track customer credit and payments</p>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-ghost btn-sm" title="Track customer debts. Add credits and monitor payments." style="margin-left:10px">?</button>
+          <button class="btn btn-primary btn-sm" onclick="showUtangHelp()" title="Click to learn what this page shows" style="margin-left:10px">Click to learn about this page</button>
           <button class="btn btn-primary" onclick="openUtangModal()">+ Add Utang</button>
         </div>
       </div>
@@ -315,7 +315,7 @@
           <h2 class="section-title">Members</h2>
           <p class="section-sub">Manage who has access to your store</p>
         </div>
-        <button class="btn btn-ghost btn-sm" title="Invite team members with your Store ID. Assign roles like cashier or admin." style="margin-left:10px">?</button>
+        <button class="btn btn-primary btn-sm" onclick="showMembersHelp()" title="Click to learn what this page shows" style="margin-left:10px">Click to learn about this page</button>
       </div>
       <div class="info-panel">
         <div class="info-panel-label">Your Store ID</div>
@@ -335,7 +335,7 @@
           <h2 class="section-title">Activity Log</h2>
           <p class="section-sub">See everything that happens in your store</p>
         </div>
-        <button class="btn btn-ghost btn-sm" title="View all changes, like added products or sales, for auditing." style="margin-left:10px">?</button>
+        <button class="btn btn-primary btn-sm" onclick="showAuditHelp()" title="Click to learn what this page shows" style="margin-left:10px">Click to learn about this page</button>
       </div>
       <div id="auditList" class="item-list">
         <div class="empty-state">No activity yet. Actions like adding products or recording sales will appear here.</div>

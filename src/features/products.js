@@ -13,6 +13,7 @@ export function initProductsFeature({
   ref,
   uploadBytes,
   getDownloadURL,
+  cloudinaryConfig,
   serverTimestamp,
   fmtNum,
   escHtml,
@@ -136,6 +137,29 @@ export function initProductsFeature({
     `);
   };
 
+  async function uploadImageToCloudinary(file) {
+    if (!cloudinaryConfig.cloudName || !cloudinaryConfig.uploadPreset) return null;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', cloudinaryConfig.uploadPreset);
+    if (cloudinaryConfig.folder) {
+      formData.append('folder', `${cloudinaryConfig.folder}/${state.currentStoreId || 'default'}`);
+    }
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Cloudinary upload failed');
+    }
+
+    const result = await response.json();
+    return result.secure_url || result.url;
+  }
+
   window.saveProduct = async function (productId) {
     const name = document.getElementById('pName').value.trim();
     const price = parseFloat(document.getElementById('pPrice').value);
@@ -148,10 +172,15 @@ export function initProductsFeature({
     let imageUrl = productId ? (state.allProducts.find(p => p.id === productId)?.imageUrl || '') : '';
     if (file) {
       try {
-        const storageRef = ref(storage, `products/${state.currentStoreId}/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        imageUrl = await getDownloadURL(storageRef);
-      } catch {
+        if (cloudinaryConfig.cloudName && cloudinaryConfig.uploadPreset) {
+          imageUrl = await uploadImageToCloudinary(file);
+        } else {
+          const storageRef = ref(storage, `products/${state.currentStoreId}/${Date.now()}_${file.name}`);
+          await uploadBytes(storageRef, file);
+          imageUrl = await getDownloadURL(storageRef);
+        }
+      } catch (e) {
+        console.warn(e);
         toast('Image upload failed, saving without image', 'warning');
       }
     }
