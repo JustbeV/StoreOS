@@ -152,6 +152,8 @@ export function initSalesFeature({
       </div>
     `).join('');
 
+    const currentMethod = state.paymentMethod || 'cash';
+    const amountReceived = state.paymentAmount !== undefined ? state.paymentAmount : '';
     const utangOptions = state.allUtang
       .filter(u => u.remaining > 0)
       .map(u => `<option value="${u.id}">${escHtml(u.customerName)} (₱${fmtNum(u.remaining)} remaining)</option>`)
@@ -166,12 +168,19 @@ export function initSalesFeature({
       </div>
       <div class="form-group">
         <label class="form-label">Payment method</label>
-        <select id="paymentMethod" onchange="toggleUtangSection()">
-          <option value="cash">Cash</option>
-          <option value="utang">Utang (Credit)</option>
+        <select id="paymentMethod" onchange="toggleUtangSection(); updatePaymentCalc()">
+          <option value="cash" ${currentMethod === 'cash' ? 'selected' : ''}>Cash</option>
+          <option value="utang" ${currentMethod === 'utang' ? 'selected' : ''}>Utang (Credit)</option>
         </select>
       </div>
-      <div id="utangSection" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Amount received</label>
+        <input type="number" id="amountReceived" value="${amountReceived}" placeholder="0.00" min="0" step="0.01" oninput="updatePaymentCalc()" onchange="updatePaymentCalc()">
+      </div>
+      <div id="paymentCalcSummary" class="payment-summary" style="margin-bottom:12px;color:var(--text-muted);font-size:14px">
+        ${cartTotal === 0 ? 'No items in cart yet' : `Change: ₱0.00`}
+      </div>
+      <div id="utangSection" style="display:${currentMethod === 'utang' ? 'block' : 'none'}">
         <div class="form-group">
           <label class="form-label">Existing customer</label>
           <select id="utangCustomerSelect">
@@ -189,6 +198,7 @@ export function initSalesFeature({
         <button class="btn btn-primary" onclick="confirmSale()">Confirm Sale</button>
       </div>
     `);
+    updatePaymentCalc();
   }
 
   window.filterSales = function (period, btn) {
@@ -236,6 +246,8 @@ export function initSalesFeature({
   window.openSaleModal = function () {
     if (!canDo('record_sale')) return toast('You don\'t have permission to record sales', 'error');
     state.cart = [];
+    state.paymentMethod = 'cash';
+    state.paymentAmount = '';
     openProductPickerModal();
   };
 
@@ -244,6 +256,8 @@ export function initSalesFeature({
     const p = state.allProducts.find(x => x.id === productId);
     if (!p || p.stock === 0) return toast('Product is out of stock', 'error');
     state.cart = [{ productId: p.id, name: p.name, price: p.price, qty: 1, maxStock: p.stock }];
+    state.paymentMethod = 'cash';
+    state.paymentAmount = '';
     openCartModal();
   };
 
@@ -295,6 +309,38 @@ export function initSalesFeature({
     const method = document.getElementById('paymentMethod').value;
     const section = document.getElementById('utangSection');
     if (section) section.style.display = method === 'utang' ? 'block' : 'none';
+    updatePaymentCalc();
+  };
+
+  window.updatePaymentCalc = function () {
+    const cartTotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const amountReceived = parseFloat(document.getElementById('amountReceived')?.value) || 0;
+    let method = document.getElementById('paymentMethod')?.value || 'cash';
+    const remaining = Math.max(0, cartTotal - amountReceived);
+    const change = Math.max(0, amountReceived - cartTotal);
+    const summary = document.getElementById('paymentCalcSummary');
+
+    if (cartTotal === 0) {
+      if (summary) summary.textContent = 'No items in cart yet';
+      return;
+    }
+
+    if (method === 'cash' && amountReceived < cartTotal) {
+      method = 'utang';
+      const paymentMethodEl = document.getElementById('paymentMethod');
+      if (paymentMethodEl) paymentMethodEl.value = 'utang';
+      const section = document.getElementById('utangSection');
+      if (section) section.style.display = 'block';
+    }
+
+    state.paymentMethod = method;
+    state.paymentAmount = amountReceived;
+
+    if (method === 'utang') {
+      if (summary) summary.textContent = `Remaining utang: ₱${fmtNum(remaining)}`;
+    } else {
+      if (summary) summary.textContent = `Change: ₱${fmtNum(change)}`;
+    }
   };
 
   window.changeQty = function (idx, delta) {
@@ -317,9 +363,21 @@ export function initSalesFeature({
     if (state.cart.length === 0) return toast('Cart is empty', 'error');
     if (!canDo('record_sale')) return toast('No permission', 'error');
 
-    const paymentMethod = document.getElementById('paymentMethod')?.value || 'cash';
+    let paymentMethod = document.getElementById('paymentMethod')?.value || 'cash';
+    const amountReceived = parseFloat(document.getElementById('amountReceived')?.value) || 0;
+    const total = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const paidNow = Math.min(amountReceived, total);
+    const owesAmount = Math.max(0, total - paidNow);
     let customerName = '';
     let customerId = '';
+
+    if (paymentMethod === 'cash' && owesAmount > 0) {
+      paymentMethod = 'utang';
+    }
+
+    if (paymentMethod === 'utang' && owesAmount === 0) {
+      paymentMethod = 'cash';
+    }
 
     if (paymentMethod === 'utang') {
       const existingId = document.getElementById('utangCustomerSelect')?.value || '';
@@ -333,7 +391,6 @@ export function initSalesFeature({
       }
     }
 
-    const total = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const saleData = {
       storeId: state.currentStoreId,
       items: state.cart.map(i => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })),
@@ -341,6 +398,8 @@ export function initSalesFeature({
       paymentMethod,
       customerName,
       customerId,
+      paidNow,
+      outstanding: owesAmount,
       recordedBy: state.currentUser.uid,
       recordedByName: state.currentUser.displayName || state.currentUser.email,
       date: serverTimestamp()
@@ -358,15 +417,23 @@ export function initSalesFeature({
         }
       }
 
-      if (paymentMethod === 'utang') {
+      if (paymentMethod === 'utang' && owesAmount > 0) {
+        const paymentEntry = paidNow > 0 ? {
+          amount: paidNow,
+          date: new Date().toISOString(),
+          recordedBy: state.currentUser.displayName || state.currentUser.email
+        } : null;
+
         if (customerId) {
           const utangRef = doc(db, 'utang', customerId);
           const utangSnap = await getDoc(utangRef);
           if (utangSnap.exists()) {
             const data = utangSnap.data();
             await updateDoc(utangRef, {
-              totalDebt: data.totalDebt + total,
-              remaining: data.remaining + total
+              totalDebt: (data.totalDebt || 0) + owesAmount,
+              totalPaid: (data.totalPaid || 0) + paidNow,
+              remaining: (data.remaining || 0) + owesAmount,
+              payments: paymentEntry ? [...(data.payments || []), paymentEntry] : (data.payments || [])
             });
           }
         } else {
@@ -374,9 +441,9 @@ export function initSalesFeature({
             storeId: state.currentStoreId,
             customerName,
             totalDebt: total,
-            totalPaid: 0,
-            remaining: total,
-            payments: [],
+            totalPaid: paidNow,
+            remaining: owesAmount,
+            payments: paymentEntry ? [paymentEntry] : [],
             createdAt: serverTimestamp()
           });
         }
@@ -384,10 +451,12 @@ export function initSalesFeature({
 
       await logAudit(
         'sale',
-        `Sale of ₱${fmtNum(total)} — ${state.cart.map(i => `${i.name} ×${i.qty}`).join(', ')}${paymentMethod === 'utang' ? ` (utang: ${customerName})` : ''}`
+        `Sale of ₱${fmtNum(total)} — ${state.cart.map(i => `${i.name} ×${i.qty}`).join(', ')}${paymentMethod === 'utang' ? ` (utang: ${customerName || 'existing customer'})` : ''}`
       );
 
       state.cart = [];
+      state.paymentMethod = 'cash';
+      state.paymentAmount = '';
       closeModal();
       toast('Sale recorded! 💰', 'success');
     } catch (e) {
